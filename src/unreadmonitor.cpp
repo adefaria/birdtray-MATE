@@ -13,8 +13,9 @@ UnreadMonitor::UnreadMonitor( TrayIcon * parent )
     moveToThread( this );
     mLastReportedUnread = 0;
 
-    // We get notification once Mork files have been modified.
+    // We get notification once Mork files or their parent directories have been modified.
     connect( &mDBWatcher, &QFileSystemWatcher::fileChanged, this, &UnreadMonitor::watchedFileChanges );
+    connect( &mDBWatcher, &QFileSystemWatcher::directoryChanged, this, &UnreadMonitor::watchedFileChanges );
 
     // Settings changed
     connect( parent, &TrayIcon::settingsChanged, this, &UnreadMonitor::slotSettingsChanged );
@@ -114,8 +115,9 @@ void UnreadMonitor::getUnreadCount_Mork(int &count, QColor &color)
     Settings* settings = BirdtrayApp::get()->getSettings();
 
     for (const QString &path : settings->watchedMorkFiles.orderedKeys()) {
-        if (!mDBWatcher.files().contains(path)) {
-            if (mDBWatcher.addPath(path)) {
+        QString dirPath = QFileInfo(path).absolutePath();
+        if (!mDBWatcher.directories().contains(dirPath)) {
+            if (mDBWatcher.addPath(dirPath)) {
                 clearWarning(path);
             } else {
                 setWarning(tr("Unable to watch %1 for changes.")
@@ -141,7 +143,8 @@ void UnreadMonitor::getUnreadCount_Mork(int &count, QColor &color)
         mMorkUnreadCounts.clear();
         for (const QString &path : settings->watchedMorkFiles.orderedKeys()) {
             mMorkUnreadCounts[path] = getMorkUnreadCount(path);
-            if (!mDBWatcher.files().contains(path) && !mDBWatcher.addPath(path)) {
+            QString dirPath = QFileInfo(path).absolutePath();
+            if (!mDBWatcher.directories().contains(dirPath) && !mDBWatcher.addPath(dirPath)) {
                 setWarning(tr("Unable to watch %1 for changes.")
                         .arg(QFileInfo(path).fileName()), path);
             } else {
