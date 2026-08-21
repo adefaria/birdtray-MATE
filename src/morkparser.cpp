@@ -81,7 +81,7 @@ bool MorkParser::open( const QString &path )
     QFile MorkFile( path );
 
     // Open file
-    if ( !MorkFile.exists() || !MorkFile.open( QIODevice::ReadOnly ) )
+    if ( !MorkFile.open( QIODevice::ReadOnly ) )
     {
         mErrorMessage = QCoreApplication::translate(
                 "MorkParser", "Couldn't open file: ") + MorkFile.errorString();
@@ -94,6 +94,7 @@ bool MorkParser::open( const QString &path )
     if ( !MagicHeader.contains( MorkMagicHeader ) )
     {
         mErrorMessage = QCoreApplication::translate("MorkParser", "Unsupported version.");
+        MorkFile.close();
         return false;
     }
 

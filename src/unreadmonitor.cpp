@@ -117,7 +117,10 @@ void UnreadMonitor::getUnreadCount_Mork(int &count, QColor &color)
     for (const QString &path : settings->watchedMorkFiles.orderedKeys()) {
         QString dirPath = QFileInfo(path).absolutePath();
         if (!mDBWatcher.directories().contains(dirPath)) {
-            if (mDBWatcher.addPath(dirPath)) {
+            mDBWatcher.addPath(dirPath);
+        }
+        if (QFile::exists(path) && !mDBWatcher.files().contains(path)) {
+            if (mDBWatcher.addPath(path)) {
                 clearWarning(path);
             } else {
                 setWarning(tr("Unable to watch %1 for changes.")
@@ -144,11 +147,11 @@ void UnreadMonitor::getUnreadCount_Mork(int &count, QColor &color)
         for (const QString &path : settings->watchedMorkFiles.orderedKeys()) {
             mMorkUnreadCounts[path] = getMorkUnreadCount(path);
             QString dirPath = QFileInfo(path).absolutePath();
-            if (!mDBWatcher.directories().contains(dirPath) && !mDBWatcher.addPath(dirPath)) {
-                setWarning(tr("Unable to watch %1 for changes.")
-                        .arg(QFileInfo(path).fileName()), path);
-            } else {
-                clearWarning(path);
+            if (!mDBWatcher.directories().contains(dirPath)) {
+                mDBWatcher.addPath(dirPath);
+            }
+            if (QFile::exists(path) && !mDBWatcher.files().contains(path)) {
+                mDBWatcher.addPath(path);
             }
         }
     }
