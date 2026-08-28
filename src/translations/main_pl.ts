@@ -830,6 +830,14 @@ Upewnij się, że wybrałeś poprawny folder.</translation>
         <source>New Task</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unread Folder Details...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Birdtray - Unread Folder Details</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnreadMonitor</name>

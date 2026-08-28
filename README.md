@@ -12,9 +12,9 @@ This fork includes several improvements designed to enhance the experience on MA
 - **Proportional Padding**: Applies a precise 16% padding margin to ensure the tray icon matches the aesthetic sizing of modern tray icons (like KeePassXC or Nextcloud) instead of stretching awkwardly.
 - **Dynamic Unread Count**: Font sizes and outline borders of the unread counter are dynamically scaled based on panel height, preventing fuzzy red blobs on small icons and overflow on large panels.
 - **Single-Click Minimization**: Left-clicking the tray icon toggles Thunderbird's visibility seamlessly, bypassing X11 focus-stealing prevention.
-- **Compositor Refresh Fix**: Fixes icon flashing/blinking on the MATE notification applet by explicitly forcing XEmbed repaints when the opacity or icon updates.
+- **Unread Folder Details Menu**: Context menu option ("Unread Folder Details...") to display a popup window detailing all monitored mailboxes, highlighting folders with unread mail in red with exact counts and paths.
 - **Direct Thunderbird Actions**: Includes "New Event" and "New Task" directly in the tray icon's context menu.
-- **File Watcher Auto-Recovery**: More robust `.msf` file monitoring that automatically recovers if files are temporarily deleted or locked by Thunderbird folder repairs.
+- **File Watcher Auto-Recovery**: Direct `.msf` file inotify monitoring with zero temp file overhead in `/tmp`.
 
 ## Standard Features Inherited from Birdtray
 

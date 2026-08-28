@@ -4,6 +4,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QPainterPath>
+#include <QDir>
 
 #include "trayicon.h"
 #include "unreadmonitor.h"
@@ -836,6 +837,8 @@ void TrayIcon::createMenu()
 
     mSystrayMenu->addSeparator();
 
+    mSystrayMenu->addAction( tr("Unread Folder Details..."), this, SLOT(actionShowUnreadFolders()) );
+
     // Some generic actions
     mSystrayMenu->addAction( tr("Settings..."), this, SLOT(showSettings()) );
 
@@ -1057,4 +1060,63 @@ void TrayIcon::drawWarningIndicator(QPainter &painter, const QSize &iconSize) {
     painter.drawLine(x, static_cast<int>(iconSize.height() * 0.33),
             x, iconSize.height() - 20 - width);
     painter.drawPoint(x, iconSize.height() - width / 2);
+}
+
+void TrayIcon::actionShowUnreadFolders()
+{
+    if (!mUnreadMonitor)
+        return;
+
+    mUnreadMonitor->forceUpdateUnread();
+
+    const QMap<QString, quint32> counts = mUnreadMonitor->getMorkUnreadCounts();
+    Settings* settings = BirdtrayApp::get()->getSettings();
+    const QStringList &watchedPaths = settings->watchedMorkFiles.orderedKeys();
+
+    int totalUnread = 0;
+    int unreadFoldersCount = 0;
+
+    QString html = "<h2>Birdtray - Monitored Unread Mail Status</h2>";
+    html += "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse: collapse;'>";
+    html += "<tr bgcolor='#d0d0d0'><th>Account / Folder</th><th align='center'>Unread Messages</th><th>Full MSF File Path</th></tr>";
+
+    for (const QString &path : watchedPaths) {
+        quint32 unread = counts.value(path, 0);
+        totalUnread += unread;
+        if (unread > 0) {
+            unreadFoldersCount++;
+        }
+
+        QFileInfo fi(path);
+        QString folderName = fi.completeBaseName();
+        QString accountName = fi.dir().dirName();
+        QString displayName = accountName + " &rarr; " + folderName;
+
+        QString countStr = QString::number(unread);
+        QString rowStyle = "";
+        if (unread > 0) {
+            countStr = QString("<b><font color='red' size='+1'>%1</font></b>").arg(unread);
+            rowStyle = " style='background-color: #ffebef;'";
+        }
+
+        html += QString("<tr%1><td><b>%2</b></td><td align='center'>%3</td><td><font size='-1' color='#555555'>%4</font></td></tr>")
+                .arg(rowStyle)
+                .arg(displayName)
+                .arg(countStr)
+                .arg(path.toHtmlEscaped());
+    }
+    html += "</table>";
+    html += QString("<br/><p style='font-size: 12pt;'><b>Total Unread Messages: <font color='%1'>%2</font></b> (%3 folder%4 with unread mail)</p>")
+            .arg(totalUnread > 0 ? "red" : "green")
+            .arg(totalUnread)
+            .arg(unreadFoldersCount)
+            .arg(unreadFoldersCount == 1 ? "" : "s");
+
+    QMessageBox msgBox(nullptr);
+    msgBox.setWindowTitle(tr("Birdtray - Unread Folder Details"));
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(html);
+    msgBox.setIcon(totalUnread > 0 ? QMessageBox::Information : QMessageBox::NoIcon);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
 }

@@ -87,6 +87,7 @@ class TrayIcon : public QSystemTrayIcon
         void    actionNewEvent();
         void    actionNewTask();
         void    actionClearIgnoredEmails();
+        void    actionShowUnreadFolders();
 
         void    actionSystrayIconActivated( QSystemTrayIcon::ActivationReason reason );
 

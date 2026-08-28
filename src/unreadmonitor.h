@@ -29,6 +29,11 @@ class UnreadMonitor : public QThread
          */
         const QMap<QString, QString> &getWarnings() const;
 
+        /**
+         * Get the current map of mork file paths to unread counts.
+         */
+        QMap< QString, quint32 > getMorkUnreadCounts() const { return mMorkUnreadCounts; }
+
     signals:
         // Unread counter changed
         void    unreadUpdated( unsigned int total, QColor color );

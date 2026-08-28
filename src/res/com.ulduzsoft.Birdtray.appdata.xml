@@ -41,6 +41,7 @@
   <launchable type="desktop-id">com.ulduzsoft.Birdtray.desktop</launchable>
 
   <releases>
+      <release date="2026-08-28" version="1.12.6" urgency="medium"/>
       <release date="2023-09-04" version="1.11.4" urgency="low"/>
       <release date="2023-09-01" version="1.11.3" urgency="low"/>
       <release date="2023-08-31" version="1.11.2" urgency="medium"/>

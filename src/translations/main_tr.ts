@@ -817,6 +817,14 @@ Lütfen doğru profiller dizinini seçtiğinizden emin olun.</translation>
         <source>New Task</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unread Folder Details...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Birdtray - Unread Folder Details</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UnreadMonitor</name>
