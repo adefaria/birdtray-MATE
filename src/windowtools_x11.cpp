@@ -1,5 +1,6 @@
 #include <QTimer>
 #include <QGuiApplication>
+#include <QThread>
 
 #include "birdtrayapp.h"
 #include "windowtools_x11.h"
@@ -411,12 +412,14 @@ bool WindowTools_X11::show()
     XRaiseWindow( display, mWinId );
     XFlush( display );
 
+    // Give window manager time to map the window before activating and focusing
+    QThread::msleep( 100 );
+
     // Make it the active window
-    // 1 == request sent from application. 2 == from pager.
-    // We use 2 because KWin doesn't always give the window focus with 1.
-    long l_active[2] = {2, CurrentTime};
+    long l_active[5] = {1, CurrentTime, 0, 0, 0};
     sendMessage( display, root, mWinId, "_NET_ACTIVE_WINDOW", 32, SubstructureNotifyMask | SubstructureRedirectMask, l_active, sizeof (l_active) );
     XSetInputFocus(display, mWinId, RevertToParent, CurrentTime);
+    XFlush( display );
 
     mHiddenStateCounter = 0;
     emit onWindowShown();
@@ -647,7 +650,7 @@ bool WindowTools_X11::triggerKey(const QString& key)
         QThread::msleep(200); // Give WM time to map
     }
 
-    long l_active[2] = {2, CurrentTime};
+    long l_active[5] = {1, CurrentTime, 0, 0, 0};
     sendMessage(display, root, mWinId, "_NET_ACTIVE_WINDOW", 32, SubstructureNotifyMask | SubstructureRedirectMask, l_active, sizeof(l_active));
     XSetInputFocus(display, mWinId, RevertToParent, CurrentTime);
     XFlush(display);
